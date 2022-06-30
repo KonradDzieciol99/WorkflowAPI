@@ -83,8 +83,7 @@ namespace WorkflowApi.Services
 
         public TeamDbo GetOne(int id, List<Claim> claimList)
         {
-            //
-            //
+
             int userId = int.Parse(claimList.Find(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var teamMember = this.dbContext.TeamMembers.Include(t => t.Team).FirstOrDefault(x => (x.TeamId == id && x.UserId == userId));
 
