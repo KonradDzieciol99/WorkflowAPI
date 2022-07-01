@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WorkflowApi.Data;
 using WorkflowApi.Models;
 
@@ -15,10 +16,16 @@ namespace WorkflowApi.Services
             this._logger = logger;
         }
 
-        public List<PTaskDto> GetAllPtask(int userId)
+        public List<PTaskDto> GetAllPtaskByTeamId(int teamId, List<Claim> ClaimList )
         {
-            throw new NotImplementedException();
-        }
+            this._dbContext.PTasks
+                .Include(pt=>pt.TeamPTask)
+                .Include(pt=>pt.)
+                
+        }   
+
+
+
         //public List<PTaskDto> GetAllPtask(int teamId)
         //{
         //    var PTasksQuery = this._dbContext.PTasks

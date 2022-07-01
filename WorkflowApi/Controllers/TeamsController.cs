@@ -40,20 +40,24 @@ namespace WorkflowApi.Controllers
 
         // GET: api/Teams/5
         [HttpGet("GetOne/{id}")]
-        public async Task<ActionResult<Team>> GetOne(int id)
+        public async Task<ActionResult<TeamDbo>> GetOne(int id)
         {
-          if (_context.Teams == null)
-          {
-              return NotFound();
-          }
-            var team = await _context.Teams.FindAsync(id);
 
-            if (team == null)
-            {
-                return NotFound();
-                //
-                //asdas
-            }
+            List<Claim> claimsList=HttpContext.User.Claims.ToList();
+            var team = this._teamService.GetOne(id, claimsList);
+
+            //var team = await _context.Teams.FindAsync(id);
+
+            //if (_context.Teams == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //if (team == null)
+            //{
+            //    return NotFound();
+
+            //}
 
             return team;
         }

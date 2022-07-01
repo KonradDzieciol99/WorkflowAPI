@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkflowApi.Data;
 using WorkflowApi.Models;
+using WorkflowApi.Services;
 
 namespace WorkflowApi.Controllers
 {
@@ -15,16 +16,19 @@ namespace WorkflowApi.Controllers
     public class PTasksController : ControllerBase
     {
         private readonly ApplicationDbContext _dbcontext;
+        private readonly IPTaskService _pTaskService;
 
-        public PTasksController(ApplicationDbContext context)
+        public PTasksController(ApplicationDbContext context, IPTaskService pTaskService)
         {
-            _dbcontext = context;
+            this._dbcontext = context;
+            this._pTaskService = pTaskService;
         }
 
         // GET: api/PTasks
-        [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<PTaskDto>>> GetAll()
+        [HttpGet("GetAllByTeamId/{id}")]
+        public async Task<ActionResult<IEnumerable<PTaskDto>>> GetAll(int id)
         {
+            this._pTaskService.
             if (_dbcontext.PTasks == null) { return NotFound(); }
 
             //HttpContext.Request.Headers.
