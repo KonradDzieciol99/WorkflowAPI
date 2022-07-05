@@ -7,8 +7,8 @@
         public DateTime? EndDate { get; set; }
         public string Title { get; set; }
         public string? Description { get; set; }
-        //public int TeamId { get; set; }
         public int? PriorityId { get; set; }
         public int StateId { get; set; }
+        public int TeamId { get; set; }
     }
 }

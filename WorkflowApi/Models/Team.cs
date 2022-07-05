@@ -9,7 +9,7 @@ namespace WorkflowApi.Models
         public string Name { get; set; }
 
         public ICollection<TeamMember> TeamMember { get; set; }
-        public ICollection<TeamPTask> TeamPTask { get; set; }
+        public ICollection<PTask> PTasks { get; set; }
 
     }
 }

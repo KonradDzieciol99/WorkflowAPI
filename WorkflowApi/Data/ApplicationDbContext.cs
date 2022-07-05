@@ -5,7 +5,6 @@ namespace WorkflowApi.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        private DateTime DateEndPlusWeek = DateTime.Now.AddDays(7);
         //public DbSet<ModelName> nazwajaką chcemy{get;set}
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -18,7 +17,6 @@ namespace WorkflowApi.Data
         public DbSet<State> States { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamMember> TeamMembers { get; set; }
-        public DbSet<TeamPTask> TeamPTask { get; set; }
         public DbSet<PTask> PTasks { get; set; }
 
 
@@ -42,9 +40,9 @@ namespace WorkflowApi.Data
             s.Name).HasDefaultValue("User");
 
             builder.Entity<Priority>().HasData(
-                new { Id = 1, Name = "High" },
+                new { Id = 1, Name = "Low" },
                 new { Id = 2, Name = "Medium" },
-                new { Id = 3, Name = "Low" });
+                new { Id = 3, Name = "High" });
 
             builder.Entity<Priority>().Property(s =>
                     s.Name).HasDefaultValue("Low");
@@ -54,11 +52,11 @@ namespace WorkflowApi.Data
                 new { Id = 2, Name = "In Progress" },
                 new { Id = 3, Name = "Done" });
 
-            builder.Entity<PTask>(e =>
-            {
-                e.Property(s => s.EndDate).HasDefaultValue(this.DateEndPlusWeek);
-                e.Property(s => s.StartDate).HasDefaultValue(DateTime.Now);
-            });
+            //builder.Entity<PTask>(e =>
+            //{
+            //    e.Property(s => s.PriorityId).HasDefaultValue(1);
+            //    e.Property(s => s.StateId).HasDefaultValue(1);
+            //});
 
             builder.Entity<PTaskDependencies>()
                 .HasOne(m => m.PTaskStart)

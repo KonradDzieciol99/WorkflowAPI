@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkflowApi.Migrations
 {
-    public partial class AddTeam : Migration
+    public partial class entitiesUpdate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -71,7 +71,7 @@ namespace WorkflowApi.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    RoleId = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
                 },
                 constraints: table =>
                 {
@@ -90,10 +90,11 @@ namespace WorkflowApi.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 6, 21, 21, 4, 13, 11, DateTimeKind.Local).AddTicks(1220)),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2022, 6, 28, 21, 4, 12, 156, DateTimeKind.Local).AddTicks(6957)),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 7, 1, 16, 6, 49, 979, DateTimeKind.Local).AddTicks(3748)),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2022, 7, 8, 16, 6, 49, 82, DateTimeKind.Local).AddTicks(4111)),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TeamId = table.Column<int>(type: "int", nullable: false),
                     PriorityId = table.Column<int>(type: "int", nullable: false),
                     StateId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -110,6 +111,12 @@ namespace WorkflowApi.Migrations
                         name: "FK_PTasks_States_StateId",
                         column: x => x.StateId,
                         principalTable: "States",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PTasks_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -167,32 +174,6 @@ namespace WorkflowApi.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "TeamPTask",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PTaskId = table.Column<int>(type: "int", nullable: false),
-                    TeamId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TeamPTask", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TeamPTask_PTasks_PTaskId",
-                        column: x => x.PTaskId,
-                        principalTable: "PTasks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TeamPTask_Teams_TeamId",
-                        column: x => x.TeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Priorityies",
                 columns: new[] { "Id", "Name" },
@@ -244,6 +225,11 @@ namespace WorkflowApi.Migrations
                 column: "StateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PTasks_TeamId",
+                table: "PTasks",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TeamMembers_TeamId",
                 table: "TeamMembers",
                 column: "TeamId");
@@ -252,16 +238,6 @@ namespace WorkflowApi.Migrations
                 name: "IX_TeamMembers_UserId",
                 table: "TeamMembers",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamPTask_PTaskId",
-                table: "TeamPTask",
-                column: "PTaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamPTask_TeamId",
-                table: "TeamPTask",
-                column: "TeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -284,25 +260,22 @@ namespace WorkflowApi.Migrations
                 name: "TeamMembers");
 
             migrationBuilder.DropTable(
-                name: "TeamPTask");
-
-            migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
                 name: "PTasks");
 
             migrationBuilder.DropTable(
-                name: "Teams");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Priorityies");
 
             migrationBuilder.DropTable(
                 name: "States");
+
+            migrationBuilder.DropTable(
+                name: "Teams");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
         }
     }
 }

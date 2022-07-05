@@ -87,7 +87,7 @@ namespace WorkflowApi.Services
             int userId = int.Parse(claimList.Find(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var teamMember = this.dbContext.TeamMembers.Include(t => t.Team).FirstOrDefault(x => (x.TeamId == id && x.UserId == userId));
 
-            if (teamMember == null)
+            if (teamMember is null)
             {
                 throw new BadRequestException("Podano błędne Id & Nie masz prawa do tego zasobu");
             }

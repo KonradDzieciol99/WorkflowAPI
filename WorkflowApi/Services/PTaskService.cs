@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WorkflowApi.Data;
+using WorkflowApi.Exceptions;
 using WorkflowApi.Models;
 
 namespace WorkflowApi.Services
@@ -16,12 +17,56 @@ namespace WorkflowApi.Services
             this._logger = logger;
         }
 
-        public List<PTaskDto> GetAllPtaskByTeamId(int teamId, List<Claim> ClaimList )
+        public PTaskDto CreatePTask(int teamId)
         {
-            this._dbContext.PTasks
-                .Include(pt=>pt.TeamPTask)
-                .Include(pt=>pt.)
-                
+
+            PTask pTask = new PTask() {TeamId= teamId };
+            _dbContext.PTasks.Add(pTask);
+
+            PTaskDto pTaskDto = new PTaskDto() 
+            {
+                Id=pTask.Id,
+                TeamId=teamId,
+                StartDate=pTask.StartDate,
+                EndDate=pTask.EndDate,
+                PriorityId=pTask.PriorityId,
+                StateId=pTask.StateId,
+            };
+            return pTaskDto;
+        }
+
+        public List<PTaskDto> GetAllPtaskByTeamId(int teamId, List<Claim> ClaimList)
+        {
+
+            int userId = int.Parse(ClaimList.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var accesTest = _dbContext.TeamMembers.Any(tm => tm.TeamId == teamId && tm.UserId == userId);
+            //var accesTest = _dbContext.TeamMembers.Any(tm => tm.TeamId == teamId && tm.UserId == userId);
+            if (accesTest==false)
+            {
+                throw new BadRequestException("Podano błędne Id & Nie masz prawa do tego zasobu");
+            }//zawsze sprawdzać czy user ma prawa do zasobu!
+
+            var PTasks = this._dbContext.PTasks
+                                .Where(t => t.TeamId == teamId).ToList();
+
+            List<PTaskDto> PTasksDto = new List<PTaskDto>();
+
+            foreach (var PTask in PTasks)
+            {
+
+                PTasksDto.Add(new PTaskDto()
+                {
+                    Id = PTask.Id,
+                    StartDate = PTask.StartDate,
+                    EndDate = PTask.EndDate,
+                    Title = PTask.Title,
+                    Description = PTask.Description,
+                    PriorityId = PTask.PriorityId,
+                    StateId = PTask.StateId,
+                    TeamId = PTask.TeamId
+                });
+            }
+            return PTasksDto;
         }   
 
 

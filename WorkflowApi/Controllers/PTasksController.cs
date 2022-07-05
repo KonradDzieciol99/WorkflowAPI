@@ -28,12 +28,14 @@ namespace WorkflowApi.Controllers
         [HttpGet("GetAllByTeamId/{id}")]
         public async Task<ActionResult<IEnumerable<PTaskDto>>> GetAll(int id)
         {
-            this._pTaskService.
-            if (_dbcontext.PTasks == null) { return NotFound(); }
+            var claimsList = HttpContext.User.Claims.ToList();
+            var pTaskDtoList=_pTaskService.GetAllPtaskByTeamId(id, claimsList);
 
-            //HttpContext.Request.Headers.
+            //if (_dbcontext.PTasks == null) { return NotFound(); }
+            //HttpContext.Request.Headers.ad
             //return await _dbcontext.PTasks.ToListAsync();
-            return new List<PTaskDto>();
+
+            return pTaskDtoList;
         }
 
         // GET: api/PTasks/5
@@ -88,18 +90,21 @@ namespace WorkflowApi.Controllers
 
         // POST: api/PTasks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<PTaskDto>> PostPTask(PTaskDto pTaskDto)
-        {
-          if (_dbcontext.PTasks == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.PTasks'  is null.");
-          }
+        [HttpPost("CreatePTask")]
+        public async Task<ActionResult<PTaskDto>> CreatePTask(int teamId)
+        {//dodać sprawdzanie czy użytkownik należy do danego teamu
+            var userClaims = HttpContext.User.Claims.ToList();
+            var ptaskdto=_pTaskService.CreatePTask(teamId);
+
+            //if (_dbcontext.PTasks == null)
+            //{
+            //    return Problem("Entity set 'ApplicationDbContext.PTasks'  is null.");
+            //}
             //_dbcontext.PTasks.Add(pTaskDto);
             //await _dbcontext.SaveChangesAsync();
+            //return CreatedAtAction("GetPTask", new { id = pTaskDto.Id }, pTaskDto);
 
-            //return CreatedAtAction("GetPTask", new { id = pTask.Id }, pTask);
-            return Ok();
+            return ptaskdto;
         }
 
         // DELETE: api/PTasks/5

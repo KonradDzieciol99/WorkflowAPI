@@ -45,11 +45,12 @@ builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
 builder.Configuration.GetConnectionString("DefaultConnection")
 ));
-builder.Services.AddScoped<ErrorHandlingMiddleware> (); //CustomExceptionMiddleware
+builder.Services.AddScoped<ErrorHandlingMiddleware> (); //CustomExceptionMiddleware doczytaæ czy potrzebny do tego servis
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator> ();
 builder.Services.AddScoped<IAccountService,AccountService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IPTaskService, PTaskService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

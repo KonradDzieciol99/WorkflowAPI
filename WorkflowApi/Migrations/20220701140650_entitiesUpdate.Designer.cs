@@ -12,8 +12,8 @@ using WorkflowApi.Data;
 namespace WorkflowApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220622001724_littlechanges2")]
-    partial class littlechanges2
+    [Migration("20220701140650_entitiesUpdate")]
+    partial class entitiesUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,7 +73,7 @@ namespace WorkflowApi.Migrations
                     b.Property<DateTime?>("EndDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 6, 29, 2, 17, 22, 923, DateTimeKind.Local).AddTicks(7960));
+                        .HasDefaultValue(new DateTime(2022, 7, 8, 16, 6, 49, 82, DateTimeKind.Local).AddTicks(4111));
 
                     b.Property<int>("PriorityId")
                         .HasColumnType("int");
@@ -81,9 +81,12 @@ namespace WorkflowApi.Migrations
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 6, 22, 2, 17, 23, 804, DateTimeKind.Local).AddTicks(9739));
+                        .HasDefaultValue(new DateTime(2022, 7, 1, 16, 6, 49, 979, DateTimeKind.Local).AddTicks(3748));
 
                     b.Property<int>("StateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -95,6 +98,8 @@ namespace WorkflowApi.Migrations
                     b.HasIndex("PriorityId");
 
                     b.HasIndex("StateId");
+
+                    b.HasIndex("TeamId");
 
                     b.ToTable("PTasks");
                 });
@@ -236,29 +241,6 @@ namespace WorkflowApi.Migrations
                     b.ToTable("TeamMembers");
                 });
 
-            modelBuilder.Entity("WorkflowApi.Models.TeamPTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("PTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PTaskId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("TeamPTask");
-                });
-
             modelBuilder.Entity("WorkflowApi.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -310,9 +292,17 @@ namespace WorkflowApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WorkflowApi.Models.Team", "Team")
+                        .WithMany("PTasks")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Priority");
 
                     b.Navigation("State");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.PTaskDependencies", b =>
@@ -353,25 +343,6 @@ namespace WorkflowApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WorkflowApi.Models.TeamPTask", b =>
-                {
-                    b.HasOne("WorkflowApi.Models.PTask", "PTask")
-                        .WithMany("TeamPTask")
-                        .HasForeignKey("PTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkflowApi.Models.Team", "Team")
-                        .WithMany("TeamPTask")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PTask");
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("WorkflowApi.Models.User", b =>
                 {
                     b.HasOne("WorkflowApi.Models.Role", "Role")
@@ -393,8 +364,6 @@ namespace WorkflowApi.Migrations
                     b.Navigation("PTaskDependenciesEnd");
 
                     b.Navigation("PTaskDependenciesStart");
-
-                    b.Navigation("TeamPTask");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.Role", b =>
@@ -409,9 +378,9 @@ namespace WorkflowApi.Migrations
 
             modelBuilder.Entity("WorkflowApi.Models.Team", b =>
                 {
-                    b.Navigation("TeamMember");
+                    b.Navigation("PTasks");
 
-                    b.Navigation("TeamPTask");
+                    b.Navigation("TeamMember");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.User", b =>

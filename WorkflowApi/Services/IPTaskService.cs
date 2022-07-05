@@ -6,5 +6,6 @@ namespace WorkflowApi.Services
     public interface IPTaskService
     {
         List<PTaskDto> GetAllPtaskByTeamId(int teamId,List<Claim> ClaimList);
+        PTaskDto CreatePTask(int teamId);
     }
 }
