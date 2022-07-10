@@ -43,7 +43,7 @@ namespace WorkflowApi.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "High"
+                            Name = "Low"
                         },
                         new
                         {
@@ -53,7 +53,7 @@ namespace WorkflowApi.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "Low"
+                            Name = "High"
                         });
                 });
 
@@ -68,27 +68,26 @@ namespace WorkflowApi.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 7, 8, 16, 6, 49, 82, DateTimeKind.Local).AddTicks(4111));
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PriorityId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 7, 1, 16, 6, 49, 979, DateTimeKind.Local).AddTicks(3748));
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StateId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -139,9 +138,7 @@ namespace WorkflowApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("User");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

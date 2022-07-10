@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkflowApi.Data;
+using WorkflowApi.DataTransferObject;
 using WorkflowApi.Models;
 using WorkflowApi.Services;
 

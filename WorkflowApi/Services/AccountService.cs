@@ -9,6 +9,7 @@ using WorkflowApi.Models;
 using System.Configuration;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using WorkflowApi.DataTransferObject;
 
 namespace WorkflowApi.Services
 {

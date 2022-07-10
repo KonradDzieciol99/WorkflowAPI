@@ -1,4 +1,4 @@
-﻿namespace WorkflowApi.Models
+﻿namespace WorkflowApi.DataTransferObject
 {
     public class TeamDbo
     {

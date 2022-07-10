@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;//?
 using System.Security.Claims;
+using WorkflowApi.DataTransferObject;
 //using System.Web.Http;
-using WorkflowApi.Models;
 using WorkflowApi.Services;
 
 namespace WorkflowApi.Controllers

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkflowApi.Migrations
 {
-    public partial class entitiesUpdate : Migration
+    public partial class littlechanges : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,7 +28,7 @@ namespace WorkflowApi.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "User")
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,13 +90,13 @@ namespace WorkflowApi.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2022, 7, 1, 16, 6, 49, 979, DateTimeKind.Local).AddTicks(3748)),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2022, 7, 8, 16, 6, 49, 82, DateTimeKind.Local).AddTicks(4111)),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TeamId = table.Column<int>(type: "int", nullable: false),
-                    PriorityId = table.Column<int>(type: "int", nullable: false),
-                    StateId = table.Column<int>(type: "int", nullable: false)
+                    PriorityId = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    StateId = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
                 },
                 constraints: table =>
                 {
@@ -179,9 +179,9 @@ namespace WorkflowApi.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "High" },
+                    { 1, "Low" },
                     { 2, "Medium" },
-                    { 3, "Low" }
+                    { 3, "High" }
                 });
 
             migrationBuilder.InsertData(

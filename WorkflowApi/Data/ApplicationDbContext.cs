@@ -36,8 +36,8 @@ namespace WorkflowApi.Data
                 new { Id = 2 ,Name = "Moder" },
                 new { Id = 3 ,Name = "Admin" });
 
-            builder.Entity<Role>().Property(s => 
-            s.Name).HasDefaultValue("User");
+            //builder.Entity<Role>().Property(s => 
+            //s.Name).HasDefaultValue("User");
 
             builder.Entity<Priority>().HasData(
                 new { Id = 1, Name = "Low" },
@@ -52,11 +52,11 @@ namespace WorkflowApi.Data
                 new { Id = 2, Name = "In Progress" },
                 new { Id = 3, Name = "Done" });
 
-            //builder.Entity<PTask>(e =>
-            //{
-            //    e.Property(s => s.PriorityId).HasDefaultValue(1);
-            //    e.Property(s => s.StateId).HasDefaultValue(1);
-            //});
+            builder.Entity<PTask>(e =>
+            {
+                e.Property(s => s.PriorityId).HasDefaultValue(1);
+                e.Property(s => s.StateId).HasDefaultValue(1);
+            });
 
             builder.Entity<PTaskDependencies>()
                 .HasOne(m => m.PTaskStart)

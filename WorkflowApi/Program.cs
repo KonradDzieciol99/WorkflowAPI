@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WorkflowApi;
 using WorkflowApi.Data;
+using WorkflowApi.DataTransferObject;
 using WorkflowApi.Models;
 using WorkflowApi.Models.Validators;
 using WorkflowApi.Services;

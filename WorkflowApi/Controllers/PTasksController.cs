@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkflowApi.Data;
-using WorkflowApi.Models;
+using WorkflowApi.DataTransferObject;
 using WorkflowApi.Services;
 
 namespace WorkflowApi.Controllers
@@ -59,42 +59,44 @@ namespace WorkflowApi.Controllers
 
         // PUT: api/PTasks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPTask(int id, PTaskDto pTaskDto)
-        {
-            if (id != pTaskDto.Id)
-            {
-                return BadRequest();
-            }
+        [HttpPut("UpdatePTask")]
+        public async Task<IActionResult> updatePTask(PTaskUpdateDto pTaskDto)
+        {//dodać sprawdzanie czy użytkownik należy do danego teamu
 
-            _dbcontext.Entry(pTaskDto).State = EntityState.Modified;
+            //if (id != pTaskDto.Id)
+            //{
+            //    return BadRequest();
+            //}
+            //_dbcontext.Entry(pTaskDto).State = EntityState.Modified;
 
-            try
-            {
-                await _dbcontext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PTaskExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            //try
+            //{
+            //    await _dbcontext.SaveChangesAsync();
+            //}
+            //catch (DbUpdateConcurrencyException)
+            //{
+            //    if (!PTaskExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
+            _pTaskService.UpdatePTask(pTaskDto);
             return NoContent();
         }
 
         // POST: api/PTasks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreatePTask")]
-        public async Task<ActionResult<PTaskDto>> CreatePTask(int teamId)
+        public async Task<ActionResult<PTaskDto>> CreatePTask(PTaskDto pTaskDto)
         {//dodać sprawdzanie czy użytkownik należy do danego teamu
-            var userClaims = HttpContext.User.Claims.ToList();
-            var ptaskdto=_pTaskService.CreatePTask(teamId);
+
+            //var userClaims = HttpContext.User.Claims.ToList();
+
+            var ptaskdto=_pTaskService.CreatePTask(pTaskDto.TeamId);
 
             //if (_dbcontext.PTasks == null)
             //{

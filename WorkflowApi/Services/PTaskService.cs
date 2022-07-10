@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WorkflowApi.Data;
+using WorkflowApi.DataTransferObject;
 using WorkflowApi.Exceptions;
 using WorkflowApi.Models;
 
@@ -22,7 +23,7 @@ namespace WorkflowApi.Services
 
             PTask pTask = new PTask() {TeamId= teamId };
             _dbContext.PTasks.Add(pTask);
-
+            _dbContext.SaveChanges();
             PTaskDto pTaskDto = new PTaskDto() 
             {
                 Id=pTask.Id,
@@ -67,7 +68,25 @@ namespace WorkflowApi.Services
                 });
             }
             return PTasksDto;
-        }   
+        }
+
+        public void UpdatePTask(PTaskUpdateDto pTaskDto)
+        {
+            PTask pTask = new PTask()
+            {
+                Id = pTaskDto.Id,
+                StartDate = pTaskDto.StartDate,
+                EndDate = pTaskDto.EndDate,
+                Title = pTaskDto.Title,
+                Description = pTaskDto.Description,
+                PriorityId = pTaskDto.PriorityId,
+                StateId = pTaskDto.StateId,
+                TeamId = pTaskDto.TeamId
+
+            };
+            _dbContext.PTasks.Update(pTask);
+            _dbContext.SaveChanges();
+        }
 
 
 

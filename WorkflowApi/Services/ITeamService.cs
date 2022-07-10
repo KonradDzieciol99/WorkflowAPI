@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using WorkflowApi.Models;
+using WorkflowApi.DataTransferObject;
 
 namespace WorkflowApi.Services
 {

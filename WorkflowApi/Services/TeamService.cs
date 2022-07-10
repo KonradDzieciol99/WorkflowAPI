@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WorkflowApi.Data;
+using WorkflowApi.DataTransferObject;
 using WorkflowApi.Exceptions;
 using WorkflowApi.Models;
 
