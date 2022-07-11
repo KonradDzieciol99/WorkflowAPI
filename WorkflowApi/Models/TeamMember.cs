@@ -13,7 +13,7 @@ namespace WorkflowApi.Models
         [ForeignKey("Team")]
         public int TeamId {get; set; }
 
-        public User User { get; set; }
+        public AppUser User { get; set; }
         public Team Team { get; set; }
     }
 }

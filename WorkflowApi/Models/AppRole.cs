@@ -2,12 +2,12 @@
 
 namespace WorkflowApi.Models
 {
-    public class Role
+    public class AppRole
     {
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public ICollection<AppUser> Users { get; set; }
     }
 }

@@ -10,28 +10,28 @@ namespace WorkflowApi.Data
         {
 
         }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<AppUser> Users { get; set; }
+        public DbSet<AppRole> Roles { get; set; }
         public DbSet<Priority> Priorityies { get; set; }
         public DbSet<PTaskDependencies> PTaskDependencies { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamMember> TeamMembers { get; set; }
         public DbSet<PTask> PTasks { get; set; }
-
+        public DbSet<UserInvited> Invitations { get; set; }
 
         //Fluent API
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<User>()
+            builder.Entity<AppUser>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            builder.Entity<User>()
+            builder.Entity<AppUser>()
                 .Property(s => s.RoleId)
                 .HasDefaultValue(1);
 
-            builder.Entity<Role>().HasData(
+            builder.Entity<AppRole>().HasData(
                 new {Id=1 ,Name = "User" },
                 new { Id = 2 ,Name = "Moder" },
                 new { Id = 3 ,Name = "Admin" });
@@ -70,6 +70,22 @@ namespace WorkflowApi.Data
                         .WithMany(t => t.PTaskDependenciesEnd)
                         .HasForeignKey(m => m.PTaskTwoId)
                         .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder.Entity<UserInvited>()
+    .HasKey(k => new { k.SourceUserId, k.InvitedUserId });
+
+            builder.Entity<UserInvited>()
+                .HasOne(s => s.SourceUser)
+                .WithMany(l => l.UsersWhoInvite)
+                .HasForeignKey(s => s.SourceUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<UserInvited>()
+                .HasOne(s => s.InvitedUser)
+                .WithMany(l => l.InvitedByUsers)
+                .HasForeignKey(s => s.InvitedUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
 
             //new { BlogId = 1, PostId = 2, Title = "Second post", Content = "Test 2" });

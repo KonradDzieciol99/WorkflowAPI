@@ -23,7 +23,7 @@ namespace WorkflowApi.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
           if (_context.Users == null)
           {
@@ -34,7 +34,7 @@ namespace WorkflowApi.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<AppUser>> GetUser(int id)
         {
           if (_context.Users == null)
           {
@@ -53,7 +53,7 @@ namespace WorkflowApi.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id, AppUser user)
         {
             if (id != user.Id)
             {
@@ -84,7 +84,7 @@ namespace WorkflowApi.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<AppUser>> PostUser(AppUser user)
         {
           if (_context.Users == null)
           {

@@ -22,6 +22,77 @@ namespace WorkflowApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("WorkflowApi.Models.AppRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Moder"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Admin"
+                        });
+                });
+
+            modelBuilder.Entity("WorkflowApi.Models.AppUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("WorkflowApi.Models.Priority", b =>
                 {
                     b.Property<int>("Id")
@@ -128,40 +199,6 @@ namespace WorkflowApi.Migrations
                     b.ToTable("PTaskDependencies");
                 });
 
-            modelBuilder.Entity("WorkflowApi.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "User"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Moder"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Admin"
-                        });
-                });
-
             modelBuilder.Entity("WorkflowApi.Models.State", b =>
                 {
                     b.Property<int>("Id")
@@ -236,41 +273,30 @@ namespace WorkflowApi.Migrations
                     b.ToTable("TeamMembers");
                 });
 
-            modelBuilder.Entity("WorkflowApi.Models.User", b =>
+            modelBuilder.Entity("WorkflowApi.Models.UserInvited", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SourceUserId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<int>("InvitedUserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.HasKey("SourceUserId", "InvitedUserId");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("InvitedUserId");
 
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                    b.ToTable("Invitations");
+                });
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+            modelBuilder.Entity("WorkflowApi.Models.AppUser", b =>
+                {
+                    b.HasOne("WorkflowApi.Models.AppRole", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("RoleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.PTask", b =>
@@ -327,7 +353,7 @@ namespace WorkflowApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkflowApi.Models.User", "User")
+                    b.HasOne("WorkflowApi.Models.AppUser", "User")
                         .WithMany("TeamMember")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -338,15 +364,37 @@ namespace WorkflowApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WorkflowApi.Models.User", b =>
+            modelBuilder.Entity("WorkflowApi.Models.UserInvited", b =>
                 {
-                    b.HasOne("WorkflowApi.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("WorkflowApi.Models.AppUser", "InvitedUser")
+                        .WithMany("InvitedByUsers")
+                        .HasForeignKey("InvitedUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.HasOne("WorkflowApi.Models.AppUser", "SourceUser")
+                        .WithMany("UsersWhoInvite")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("InvitedUser");
+
+                    b.Navigation("SourceUser");
+                });
+
+            modelBuilder.Entity("WorkflowApi.Models.AppRole", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("WorkflowApi.Models.AppUser", b =>
+                {
+                    b.Navigation("InvitedByUsers");
+
+                    b.Navigation("TeamMember");
+
+                    b.Navigation("UsersWhoInvite");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.Priority", b =>
@@ -361,11 +409,6 @@ namespace WorkflowApi.Migrations
                     b.Navigation("PTaskDependenciesStart");
                 });
 
-            modelBuilder.Entity("WorkflowApi.Models.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("WorkflowApi.Models.State", b =>
                 {
                     b.Navigation("PTasks");
@@ -375,11 +418,6 @@ namespace WorkflowApi.Migrations
                 {
                     b.Navigation("PTasks");
 
-                    b.Navigation("TeamMember");
-                });
-
-            modelBuilder.Entity("WorkflowApi.Models.User", b =>
-                {
                     b.Navigation("TeamMember");
                 });
 #pragma warning restore 612, 618

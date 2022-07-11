@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkflowApi.Migrations
 {
-    public partial class littlechanges : Migration
+    public partial class AddUserInvited : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -122,6 +122,28 @@ namespace WorkflowApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Invitations",
+                columns: table => new
+                {
+                    SourceUserId = table.Column<int>(type: "int", nullable: false),
+                    InvitedUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invitations", x => new { x.SourceUserId, x.InvitedUserId });
+                    table.ForeignKey(
+                        name: "FK_Invitations_Users_InvitedUserId",
+                        column: x => x.InvitedUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Invitations_Users_SourceUserId",
+                        column: x => x.SourceUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TeamMembers",
                 columns: table => new
                 {
@@ -205,6 +227,11 @@ namespace WorkflowApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invitations_InvitedUserId",
+                table: "Invitations",
+                column: "InvitedUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PTaskDependencies_PTaskOneId",
                 table: "PTaskDependencies",
                 column: "PTaskOneId");
@@ -253,6 +280,9 @@ namespace WorkflowApi.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Invitations");
+
             migrationBuilder.DropTable(
                 name: "PTaskDependencies");
 

@@ -16,10 +16,10 @@ namespace WorkflowApi.Services
     public class AccountService : IAccountService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IPasswordHasher<AppUser> _passwordHasher;
         private readonly AuthSettings _authSettings;
 
-        public AccountService(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, AuthSettings authSettings)
+        public AccountService(ApplicationDbContext dbContext, IPasswordHasher<AppUser> passwordHasher, AuthSettings authSettings)
         {
             this._dbContext = dbContext;
             this._passwordHasher = passwordHasher;
@@ -28,7 +28,7 @@ namespace WorkflowApi.Services
 
         public Tuple<string, DateTime> GenerateJwt(UserDto dto)
         {
-            User user = _dbContext.Users
+            AppUser user = _dbContext.Users
                 .Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == dto.Email);
             
@@ -72,7 +72,7 @@ namespace WorkflowApi.Services
 
         public void RegisterUser(RegisterUserDto dto)
         {
-            User newUser = new()
+            AppUser newUser = new()
             {
                 Email = dto.Email
             };
