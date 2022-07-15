@@ -22,6 +22,8 @@ namespace WorkflowApi.Models
 
         public ICollection<UserInvited> UsersWhoInvite { get; set; }
         public ICollection<UserInvited> InvitedByUsers { get; set; }
-        
+        public ICollection<Message> MessagesSent { get; set; }
+        public ICollection<Message> MessagesReceived { get; set; }
+
     }
 }

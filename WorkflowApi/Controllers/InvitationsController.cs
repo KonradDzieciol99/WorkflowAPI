@@ -23,17 +23,14 @@ namespace WorkflowApi.Controllers
             _context = context;
         }
 
-
-
-
         // GET: api/Invitations/5
         [HttpGet("FindUser/{email}")]
         public async Task<ActionResult<List<FoundUserDto>>> FindUser(string email)
         {
-            //if (_context.Invitations == null)
-            //{
-            //    return NotFound();
-            //}
+            if(email==null)
+            {
+                return BadRequest();
+            }
             var users = _context.Users.Where(u => u.Email.StartsWith(email)).ToList();
 
             List<FoundUserDto> foundUsers = new List<FoundUserDto>();
@@ -41,15 +38,6 @@ namespace WorkflowApi.Controllers
             {
                 foundUsers.Add(new FoundUserDto() { Email = user.Email,Id=user.Id });
             };
-                
-                //.ToList();
-
-            //var userInvited = await _context.Invitations.FindAsync(id);
-
-            //if (foundUsers == null)
-            //{
-            //    return NotFound();
-            //}
 
             return foundUsers;
         }
@@ -124,32 +112,47 @@ namespace WorkflowApi.Controllers
 
         // POST: api/Invitations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<UserInvited>> PostUserInvited(UserInvited userInvited)
-        //{
-        //  if (_context.Invitations == null)
-        //  {
-        //      return Problem("Entity set 'ApplicationDbContext.Invitations'  is null.");
-        //  }
-        //    _context.Invitations.Add(userInvited);
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        if (UserInvitedExists(userInvited.SourceUserId))
-        //        {
-        //            return Conflict();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+        [HttpPost("InviteUser")]
+        public async Task<ActionResult> PostInviteUser([FromBody] int userInvitedId)
+        {
+            var sourseUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-        //    return CreatedAtAction("GetUserInvited", new { id = userInvited.SourceUserId }, userInvited);
-        //}
+            UserInvited userInvited = new UserInvited()
+            {
+                SourceUserId = sourseUserId,
+                InvitedUserId = userInvitedId
+            };
+
+            //var user=_context.Users.Include(x => x.InvitedByUsers).FirstOrDefault(x => x.Id == sourseUserId);
+            //user.InvitedByUsers.Add(userInvited);
+
+            _context.Invitations.Add(userInvited);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+            //if (_context.Invitations == null)
+            //{
+            //    return Problem("Entity set 'ApplicationDbContext.Invitations'  is null.");
+            //}
+            //_context.Invitations.Add(userInvited);
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateException)
+            //{
+            //    if (UserInvitedExists(userInvited.SourceUserId))
+            //    {
+            //        return Conflict();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
+
+            //return CreatedAtAction("GetUserInvited", new { id = userInvited.SourceUserId }, userInvited);
+        }
 
         // DELETE: api/Invitations/5
         //[HttpDelete("{id}")]

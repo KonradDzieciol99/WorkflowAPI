@@ -7,5 +7,7 @@
 
         public AppUser InvitedUser { get; set; }
         public int InvitedUserId { get; set; }
+
+        public bool Confirmed { get; set; }
     }
 }

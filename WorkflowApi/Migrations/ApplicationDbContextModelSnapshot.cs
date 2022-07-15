@@ -281,6 +281,11 @@ namespace WorkflowApi.Migrations
                     b.Property<int>("InvitedUserId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Confirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.HasKey("SourceUserId", "InvitedUserId");
 
                     b.HasIndex("InvitedUserId");

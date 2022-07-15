@@ -19,10 +19,15 @@ namespace WorkflowApi.Data
         public DbSet<TeamMember> TeamMembers { get; set; }
         public DbSet<PTask> PTasks { get; set; }
         public DbSet<UserInvited> Invitations { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         //Fluent API
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
+            builder.Entity<UserInvited>()
+                .Property(u =>u.Confirmed).HasDefaultValue(false);
+
             builder.Entity<AppUser>()
                 .HasIndex(u => u.Email)
                 .IsUnique();

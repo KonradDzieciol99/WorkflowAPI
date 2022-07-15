@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkflowApi.Migrations
 {
-    public partial class AddUserInvited : Migration
+    public partial class changeUserInvited : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -126,7 +126,8 @@ namespace WorkflowApi.Migrations
                 columns: table => new
                 {
                     SourceUserId = table.Column<int>(type: "int", nullable: false),
-                    InvitedUserId = table.Column<int>(type: "int", nullable: false)
+                    InvitedUserId = table.Column<int>(type: "int", nullable: false),
+                    Confirmed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {

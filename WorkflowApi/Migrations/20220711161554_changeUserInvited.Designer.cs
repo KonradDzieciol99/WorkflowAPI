@@ -12,8 +12,8 @@ using WorkflowApi.Data;
 namespace WorkflowApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220711110813_AddUserInvited")]
-    partial class AddUserInvited
+    [Migration("20220711161554_changeUserInvited")]
+    partial class changeUserInvited
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -282,6 +282,11 @@ namespace WorkflowApi.Migrations
 
                     b.Property<int>("InvitedUserId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Confirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.HasKey("SourceUserId", "InvitedUserId");
 
