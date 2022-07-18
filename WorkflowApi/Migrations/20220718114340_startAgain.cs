@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkflowApi.Migrations
 {
-    public partial class changeUserInvited : Migration
+    public partial class startAgain : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -136,26 +136,57 @@ namespace WorkflowApi.Migrations
                         name: "FK_Invitations_Users_InvitedUserId",
                         column: x => x.InvitedUserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Invitations_Users_SourceUserId",
                         column: x => x.SourceUserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SenderId = table.Column<int>(type: "int", nullable: false),
+                    SenderUsername = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecipientId = table.Column<int>(type: "int", nullable: false),
+                    RecipientUsername = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateRead = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MessageSent = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Users_RecipientId",
+                        column: x => x.RecipientId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_Users_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "TeamMembers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     TeamId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TeamMembers", x => x.Id);
+                    table.PrimaryKey("PK_TeamMembers", x => new { x.UserId, x.TeamId });
                     table.ForeignKey(
                         name: "FK_TeamMembers_Teams_TeamId",
                         column: x => x.TeamId,
@@ -233,6 +264,16 @@ namespace WorkflowApi.Migrations
                 column: "InvitedUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Messages_RecipientId",
+                table: "Messages",
+                column: "RecipientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PTaskDependencies_PTaskOneId",
                 table: "PTaskDependencies",
                 column: "PTaskOneId");
@@ -263,11 +304,6 @@ namespace WorkflowApi.Migrations
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamMembers_UserId",
-                table: "TeamMembers",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -283,6 +319,9 @@ namespace WorkflowApi.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Invitations");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "PTaskDependencies");

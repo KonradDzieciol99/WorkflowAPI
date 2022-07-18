@@ -1,6 +1,6 @@
 ﻿namespace WorkflowApi.DataTransferObject
 {
-    public class TeamDbo
+    public class TeamDto
     {
         public int? Id { get; set; }
         public string Name { get; set; }

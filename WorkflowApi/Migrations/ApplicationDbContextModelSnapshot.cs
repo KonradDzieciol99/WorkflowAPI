@@ -93,6 +93,47 @@ namespace WorkflowApi.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("WorkflowApi.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateRead")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("MessageSent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecipientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecipientUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("WorkflowApi.Models.Priority", b =>
                 {
                     b.Property<int>("Id")
@@ -252,23 +293,15 @@ namespace WorkflowApi.Migrations
 
             modelBuilder.Entity("WorkflowApi.Models.TeamMember", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "TeamId");
 
                     b.HasIndex("TeamId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("TeamMembers");
                 });
@@ -302,6 +335,25 @@ namespace WorkflowApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("WorkflowApi.Models.Message", b =>
+                {
+                    b.HasOne("WorkflowApi.Models.AppUser", "Recipient")
+                        .WithMany("MessagesReceived")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WorkflowApi.Models.AppUser", "Sender")
+                        .WithMany("MessagesSent")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.PTask", b =>
@@ -353,13 +405,13 @@ namespace WorkflowApi.Migrations
             modelBuilder.Entity("WorkflowApi.Models.TeamMember", b =>
                 {
                     b.HasOne("WorkflowApi.Models.Team", "Team")
-                        .WithMany("TeamMember")
+                        .WithMany("TeamMembers")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WorkflowApi.Models.AppUser", "User")
-                        .WithMany("TeamMember")
+                        .WithMany("TeamMembers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -374,13 +426,13 @@ namespace WorkflowApi.Migrations
                     b.HasOne("WorkflowApi.Models.AppUser", "InvitedUser")
                         .WithMany("InvitedByUsers")
                         .HasForeignKey("InvitedUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("WorkflowApi.Models.AppUser", "SourceUser")
                         .WithMany("UsersWhoInvite")
                         .HasForeignKey("SourceUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("InvitedUser");
@@ -397,7 +449,11 @@ namespace WorkflowApi.Migrations
                 {
                     b.Navigation("InvitedByUsers");
 
-                    b.Navigation("TeamMember");
+                    b.Navigation("MessagesReceived");
+
+                    b.Navigation("MessagesSent");
+
+                    b.Navigation("TeamMembers");
 
                     b.Navigation("UsersWhoInvite");
                 });
@@ -423,7 +479,7 @@ namespace WorkflowApi.Migrations
                 {
                     b.Navigation("PTasks");
 
-                    b.Navigation("TeamMember");
+                    b.Navigation("TeamMembers");
                 });
 #pragma warning restore 612, 618
         }

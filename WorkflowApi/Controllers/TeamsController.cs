@@ -30,18 +30,18 @@ namespace WorkflowApi.Controllers
 
         // GET: api/Teams
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<TeamDbo>>> GetAll()
+        public async Task<ActionResult<IEnumerable<TeamDto>>> GetAll()
         {
 
             List<Claim> claimList = HttpContext.User.Claims.ToList();
-            List<TeamDbo> teamDboList = this._teamService.GetAll(claimList);
+            List<TeamDto> teamDboList = this._teamService.GetAll(claimList);
 
             return teamDboList;
         }
 
         // GET: api/Teams/5
         [HttpGet("GetOne/{id}")]
-        public async Task<ActionResult<TeamDbo>> GetOne(int id)
+        public async Task<ActionResult<TeamDto>> GetOne(int id)
         {
 
             List<Claim> claimsList=HttpContext.User.Claims.ToList();
@@ -98,7 +98,7 @@ namespace WorkflowApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //[HttpGet("Test")]
         [HttpPost("CreateTeam")]
-        public async Task<ActionResult<TeamDbo>> CreateTeam(TeamDbo teamDbo)
+        public async Task<ActionResult<TeamDto>> CreateTeam(TeamDto teamDbo)
         {
 
             List<Claim> claimList = HttpContext.User.Claims.ToList();

@@ -5,9 +5,9 @@ namespace WorkflowApi.Services
 {
     public interface ITeamService
     {
-        TeamDbo GetOne(int id, List<Claim> ClaimsList);
-        TeamDbo CreateTeam(TeamDbo teamDbo, List<Claim> claimList);
+        TeamDto GetOne(int id, List<Claim> ClaimsList);
+        TeamDto CreateTeam(TeamDto teamDbo, List<Claim> claimList);
         void AddMember(string email,int teamId);
-        List<TeamDbo> GetAll(List<Claim> claimList);
+        List<TeamDto> GetAll(List<Claim> claimList);
     }
 }

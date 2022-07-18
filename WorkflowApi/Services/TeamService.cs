@@ -15,15 +15,15 @@ namespace WorkflowApi.Services
         {
             this.dbContext = dbContext;
         }
-        public List<TeamDbo> GetAll(List<Claim> claimList)
+        public List<TeamDto> GetAll(List<Claim> claimList)
         {
             int userId = int.Parse(claimList.Find(e => e.Type == ClaimTypes.NameIdentifier).Value);
             var belongingsTeams = dbContext.TeamMembers.Include(t => t.Team).Where(t => t.UserId == userId).ToList();
-            List<TeamDbo> teamDboList = new List<TeamDbo>();
+            List<TeamDto> teamDboList = new List<TeamDto>();
 
             foreach (var item in belongingsTeams)
             {
-                TeamDbo teamDbo = new TeamDbo()
+                TeamDto teamDbo = new TeamDto()
                 {
                     Id = item.Team.Id,
                     Name = item.Team.Name,
@@ -54,7 +54,7 @@ namespace WorkflowApi.Services
 
         }
         //todo// remove user function
-        public TeamDbo CreateTeam(TeamDbo teamDbo, List<Claim> claimList)
+        public TeamDto CreateTeam(TeamDto teamDbo, List<Claim> claimList)
         {
             Team team = new Team()
             {
@@ -73,7 +73,7 @@ namespace WorkflowApi.Services
             this.dbContext.TeamMembers.Add(teamMember);
             this.dbContext.SaveChanges();
 
-            TeamDbo teamDboRet = new TeamDbo()
+            TeamDto teamDboRet = new TeamDto()
             {
                 Id = team.Id,
                 Name = team.Name
@@ -82,7 +82,7 @@ namespace WorkflowApi.Services
             return teamDboRet;
         }
 
-        public TeamDbo GetOne(int id, List<Claim> claimList)
+        public TeamDto GetOne(int id, List<Claim> claimList)
         {
 
             int userId = int.Parse(claimList.Find(c => c.Type == ClaimTypes.NameIdentifier).Value);
@@ -93,7 +93,7 @@ namespace WorkflowApi.Services
                 throw new BadRequestException("Podano błędne Id & Nie masz prawa do tego zasobu");
             }
 
-            TeamDbo teamDbo = new TeamDbo()
+            TeamDto teamDbo = new TeamDto()
             {
                 Id = teamMember.TeamId,
                 Name = teamMember.Team.Name

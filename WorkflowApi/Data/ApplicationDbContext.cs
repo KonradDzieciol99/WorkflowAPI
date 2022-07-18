@@ -25,9 +25,6 @@ namespace WorkflowApi.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
-            builder.Entity<UserInvited>()
-                .Property(u =>u.Confirmed).HasDefaultValue(false);
-
             builder.Entity<AppUser>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -41,8 +38,6 @@ namespace WorkflowApi.Data
                 new { Id = 2 ,Name = "Moder" },
                 new { Id = 3 ,Name = "Admin" });
 
-            //builder.Entity<Role>().Property(s => 
-            //s.Name).HasDefaultValue("User");
 
             builder.Entity<Priority>().HasData(
                 new { Id = 1, Name = "Low" },
@@ -76,21 +71,51 @@ namespace WorkflowApi.Data
                         .HasForeignKey(m => m.PTaskTwoId)
                         .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<TeamMember>()
+                .HasKey(t => new { t.UserId, t.TeamId});
+
+            builder.Entity<TeamMember>()
+                .HasOne<Team>(t => t.Team)
+                .WithMany(s => s.TeamMembers)
+                .HasForeignKey(t => t.TeamId);
+
+            builder.Entity<TeamMember>()
+                .HasOne<AppUser>(u => u.User)
+                .WithMany(t => t.TeamMembers)
+                .HasForeignKey(u => u.UserId);
 
             builder.Entity<UserInvited>()
-    .HasKey(k => new { k.SourceUserId, k.InvitedUserId });
+                .HasKey(k => new { k.SourceUserId, k.InvitedUserId });
+
+            builder.Entity<UserInvited>()
+                .Property(u => u.Confirmed).HasDefaultValue(false);
 
             builder.Entity<UserInvited>()
                 .HasOne(s => s.SourceUser)
                 .WithMany(l => l.UsersWhoInvite)
                 .HasForeignKey(s => s.SourceUserId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<UserInvited>()
                 .HasOne(s => s.InvitedUser)
                 .WithMany(l => l.InvitedByUsers)
                 .HasForeignKey(s => s.InvitedUserId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Message>()
+                .HasKey(m => m.Id);
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany(u => u.MessagesSent)
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Recipient)
+                .WithMany(u => u.MessagesReceived)
+                .HasForeignKey(m => m.RecipientId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             //new { BlogId = 1, PostId = 2, Title = "Second post", Content = "Test 2" });
