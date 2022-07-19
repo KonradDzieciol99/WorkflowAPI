@@ -15,21 +15,22 @@ namespace WorkflowApi.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IPasswordHasher<AppUser> _passwordHasher;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly AuthSettings _authSettings;
+       
 
-        public AccountService(ApplicationDbContext dbContext, IPasswordHasher<AppUser> passwordHasher, AuthSettings authSettings)
+        public AccountService(UserManager<AppUser> userManager ,SignInManager<AppUser> signInManager, AuthSettings authSettings)
         {
-            this._dbContext = dbContext;
-            this._passwordHasher = passwordHasher;
+            this._userManager = userManager;
+            this._signInManager = signInManager;
             this._authSettings = authSettings;
         }
 
-        public Tuple<string, DateTime> GenerateJwt(UserDto dto)
+        public async Task<Tuple<string, DateTime>> GenerateJwt(UserDto dto)
         {
-            AppUser user = _dbContext.Users
-                .Include(u => u.Role)
+            AppUser user = _userManager.Users
+                //.Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == dto.Email);
             
             if(user is null)
@@ -37,16 +38,18 @@ namespace WorkflowApi.Services
                 throw new BadRequestException("Błędny użytkownik lub hasło");
             }
 
-            var resoult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
-            if(resoult == PasswordVerificationResult.Failed)
+            var result = await _signInManager
+                .CheckPasswordSignInAsync(user, dto.Password, false);
+
+            if (!result.Succeeded)
             {
                 throw new BadRequestException("Błędny użytkownik lub hasło");
             }
+
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.Name)
             };
             
             var issuerAppSettings = _authSettings.jwtIssuer;
@@ -64,22 +67,26 @@ namespace WorkflowApi.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            
             return Tuple.Create(tokenHandler.WriteToken(token), expiresMinutes);
-            //return tokenHandler.WriteToken(token);
-
         }
 
-        public void RegisterUser(RegisterUserDto dto)
+        public async Task RegisterUserAsync(RegisterUserDto dto)
         {
             AppUser newUser = new()
             {
-                Email = dto.Email
+                Email = dto.Email,
+                UserName = dto.Email
+
             };
-            var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
-            newUser.PasswordHash = hashedPassword;
-            _dbContext.Users.Add(newUser);
-            _dbContext.SaveChanges();
+            var resoult = await _userManager.CreateAsync(newUser, dto.Password);
+
+            //should be 401 (Unauthorized)
+            if (!resoult.Succeeded)
+            {
+                string errorDescription = "";
+                resoult.Errors.ToList().ForEach(x => errorDescription+= x.Description);
+                throw new BadRequestException(errorDescription);
+            }
         }
     }
 }

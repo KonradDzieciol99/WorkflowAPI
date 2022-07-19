@@ -13,40 +13,40 @@ namespace WorkflowApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PTasksController : ControllerBase
+    public class AppTasksController : ControllerBase
     {
         private readonly ApplicationDbContext _dbcontext;
-        private readonly IPTaskService _pTaskService;
+        private readonly IAppTaskService _pTaskService;
 
-        public PTasksController(ApplicationDbContext context, IPTaskService pTaskService)
+        public AppTasksController(ApplicationDbContext context, IAppTaskService pTaskService)
         {
             this._dbcontext = context;
             this._pTaskService = pTaskService;
         }
 
-        // GET: api/PTasks
+        // GET: api/AppTasks
         [HttpGet("GetAllByTeamId/{id}")]
         public async Task<ActionResult<IEnumerable<PTaskDto>>> GetAll(int id)
         {
             var claimsList = HttpContext.User.Claims.ToList();
             var pTaskDtoList=_pTaskService.GetAllPtaskByTeamId(id, claimsList);
 
-            //if (_dbcontext.PTasks == null) { return NotFound(); }
+            //if (_dbcontext.AppTasks == null) { return NotFound(); }
             //HttpContext.Request.Headers.ad
-            //return await _dbcontext.PTasks.ToListAsync();
+            //return await _dbcontext.AppTasks.ToListAsync();
 
             return pTaskDtoList;
         }
 
-        // GET: api/PTasks/5
+        // GET: api/AppTasks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PTaskDto>> GetPTask(int id)
         {
-          if (_dbcontext.PTasks == null)
+          if (_dbcontext.AppTasks == null)
           {
               return NotFound();
           }
-            var pTask = await _dbcontext.PTasks.FindAsync(id);
+            var pTask = await _dbcontext.AppTasks.FindAsync(id);
 
             if (pTask == null)
             {
@@ -57,7 +57,7 @@ namespace WorkflowApi.Controllers
             return Ok();
         }
 
-        // PUT: api/PTasks/5
+        // PUT: api/AppTasks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("UpdatePTask")]
         public async Task<IActionResult> updatePTask(PTaskUpdateDto pTaskDto)
@@ -88,7 +88,7 @@ namespace WorkflowApi.Controllers
             return NoContent();
         }
 
-        // POST: api/PTasks
+        // POST: api/AppTasks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreatePTask")]
         public async Task<ActionResult<PTaskDto>> CreatePTask(PTaskDto pTaskDto)
@@ -98,32 +98,32 @@ namespace WorkflowApi.Controllers
 
             var ptaskdto=_pTaskService.CreatePTask(pTaskDto.TeamId);
 
-            //if (_dbcontext.PTasks == null)
+            //if (_dbcontext.AppTasks == null)
             //{
-            //    return Problem("Entity set 'ApplicationDbContext.PTasks'  is null.");
+            //    return Problem("Entity set 'ApplicationDbContext.AppTasks'  is null.");
             //}
-            //_dbcontext.PTasks.Add(pTaskDto);
+            //_dbcontext.AppTasks.Add(pTaskDto);
             //await _dbcontext.SaveChangesAsync();
             //return CreatedAtAction("GetPTask", new { id = pTaskDto.Id }, pTaskDto);
 
             return ptaskdto;
         }
 
-        // DELETE: api/PTasks/5
+        // DELETE: api/AppTasks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePTask(int id)
         {
-            if (_dbcontext.PTasks == null)
+            if (_dbcontext.AppTasks == null)
             {
                 return NotFound();
             }
-            var pTask = await _dbcontext.PTasks.FindAsync(id);
+            var pTask = await _dbcontext.AppTasks.FindAsync(id);
             if (pTask == null)
             {
                 return NotFound();
             }
 
-            _dbcontext.PTasks.Remove(pTask);
+            _dbcontext.AppTasks.Remove(pTask);
             await _dbcontext.SaveChangesAsync();
 
             return NoContent();
@@ -131,7 +131,7 @@ namespace WorkflowApi.Controllers
 
         private bool PTaskExists(int id)
         {
-            return (_dbcontext.PTasks?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_dbcontext.AppTasks?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

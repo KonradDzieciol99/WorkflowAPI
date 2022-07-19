@@ -1,75 +1,75 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WorkflowApi.Models;
 
 namespace WorkflowApi.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, int>
     {
-        //public DbSet<ModelName> nazwajaką chcemy{get;set}
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
-        public DbSet<AppUser> Users { get; set; }
-        public DbSet<AppRole> Roles { get; set; }
         public DbSet<Priority> Priorityies { get; set; }
-        public DbSet<PTaskDependencies> PTaskDependencies { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamMember> TeamMembers { get; set; }
-        public DbSet<PTask> PTasks { get; set; }
+        public DbSet<AppTask> AppTasks { get; set; }
         public DbSet<UserInvited> Invitations { get; set; }
         public DbSet<Message> Messages { get; set; }
 
-        //Fluent API
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);//because of identity
 
-            builder.Entity<AppUser>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
+            builder.Entity<Team>(ts =>
+            {
+                ts.HasKey(t => t.Id);
+            });
 
-            builder.Entity<AppUser>()
-                .Property(s => s.RoleId)
-                .HasDefaultValue(1);
+            builder.Entity<Priority>(ps =>
+            {
+                ps.HasKey(p => p.Id);
 
-            builder.Entity<AppRole>().HasData(
-                new {Id=1 ,Name = "User" },
-                new { Id = 2 ,Name = "Moder" },
-                new { Id = 3 ,Name = "Admin" });
+                ps.Property(s =>s.Name).HasDefaultValue("Low");
 
-
-            builder.Entity<Priority>().HasData(
+                ps.HasData(
                 new { Id = 1, Name = "Low" },
                 new { Id = 2, Name = "Medium" },
                 new { Id = 3, Name = "High" });
+            });
 
-            builder.Entity<Priority>().Property(s =>
-                    s.Name).HasDefaultValue("Low");
+            builder.Entity<State>(ss =>
+            {
+                ss.HasKey(s => s.Id);
 
-            builder.Entity<State>().HasData(
+                ss.HasData(
                 new { Id = 1, Name = "ToDo" },
                 new { Id = 2, Name = "In Progress" },
                 new { Id = 3, Name = "Done" });
-
-            builder.Entity<PTask>(e =>
-            {
-                e.Property(s => s.PriorityId).HasDefaultValue(1);
-                e.Property(s => s.StateId).HasDefaultValue(1);
             });
 
-            builder.Entity<PTaskDependencies>()
-                .HasOne(m => m.PTaskStart)
-                .WithMany(t => t.PTaskDependenciesStart)
-                .HasForeignKey(m => m.PTaskOneId)
-                .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<AppTask>(ts =>
+            {
+                ts.HasKey(t => t.Id);
 
-            builder.Entity<PTaskDependencies>()
-                        .HasOne(m => m.PTaskEnd)
-                        .WithMany(t => t.PTaskDependenciesEnd)
-                        .HasForeignKey(m => m.PTaskTwoId)
-                        .OnDelete(DeleteBehavior.Restrict);
+                ts.HasOne(t => t.Team)
+                .WithMany(team => team.AppTasks)
+                .HasForeignKey(t => t.TeamId);
+
+                ts.HasOne(t => t.State)
+                .WithMany(s => s.AppTasks)
+                .HasForeignKey(t => t.StateId);
+
+                ts.HasOne(t => t.Priority)
+                .WithMany(p => p.AppTasks)
+                .HasForeignKey(t => t.PriorityId);
+
+                ts.Property(s => s.PriorityId).HasDefaultValue(1);
+                ts.Property(s => s.StateId).HasDefaultValue(1);
+                ts.Property(t => t.TeamId).IsRequired();
+            });
 
             builder.Entity<TeamMember>()
                 .HasKey(t => new { t.UserId, t.TeamId});
@@ -116,12 +116,7 @@ namespace WorkflowApi.Data
                 .WithMany(u => u.MessagesReceived)
                 .HasForeignKey(m => m.RecipientId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-
             //new { BlogId = 1, PostId = 2, Title = "Second post", Content = "Test 2" });
-
         }
-
-
     }
 }

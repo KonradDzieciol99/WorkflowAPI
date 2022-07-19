@@ -7,12 +7,12 @@ using WorkflowApi.Models;
 
 namespace WorkflowApi.Services
 {
-    public class PTaskService : IPTaskService
+    public class AppTaskService : IAppTaskService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly ILogger<PTaskService> _logger;
+        private readonly ILogger<AppTaskService> _logger;
 
-        public PTaskService(ApplicationDbContext dbContext, ILogger<PTaskService> logger)
+        public AppTaskService(ApplicationDbContext dbContext, ILogger<AppTaskService> logger)
         {
             this._dbContext = dbContext;
             this._logger = logger;
@@ -21,8 +21,8 @@ namespace WorkflowApi.Services
         public PTaskDto CreatePTask(int teamId)
         {
 
-            PTask pTask = new PTask() {TeamId= teamId };
-            _dbContext.PTasks.Add(pTask);
+            AppTask pTask = new AppTask() {TeamId= teamId };
+            _dbContext.AppTasks.Add(pTask);
             _dbContext.SaveChanges();
             PTaskDto pTaskDto = new PTaskDto() 
             {
@@ -47,7 +47,7 @@ namespace WorkflowApi.Services
                 throw new BadRequestException("Podano błędne Id & Nie masz prawa do tego zasobu");
             }//zawsze sprawdzać czy user ma prawa do zasobu!
 
-            var PTasks = this._dbContext.PTasks
+            var PTasks = this._dbContext.AppTasks
                                 .Where(t => t.TeamId == teamId).ToList();
 
             List<PTaskDto> PTasksDto = new List<PTaskDto>();
@@ -72,7 +72,7 @@ namespace WorkflowApi.Services
 
         public void UpdatePTask(PTaskUpdateDto pTaskDto)
         {
-            PTask pTask = new PTask()
+            AppTask pTask = new AppTask()
             {
                 Id = pTaskDto.Id,
                 StartDate = pTaskDto.StartDate,
@@ -84,7 +84,7 @@ namespace WorkflowApi.Services
                 TeamId = pTaskDto.TeamId
 
             };
-            _dbContext.PTasks.Update(pTask);
+            _dbContext.AppTasks.Update(pTask);
             _dbContext.SaveChanges();
         }
 
@@ -92,7 +92,7 @@ namespace WorkflowApi.Services
 
         //public List<PTaskDto> GetAllPtask(int teamId)
         //{
-        //    var PTasksQuery = this._dbContext.PTasks
+        //    var PTasksQuery = this._dbContext.AppTasks
         //                    .Where(Pt=> Pt.TeamId == teamId)
         //                    .Include(PT=>PT.State)
         //                    .Include(PT=>PT.Priority);

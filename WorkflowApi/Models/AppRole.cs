@@ -1,13 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace WorkflowApi.Models
 {
-    public class AppRole
+    public class AppRole: IdentityRole<int>
     {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public ICollection<AppUser> Users { get; set; }
     }
 }

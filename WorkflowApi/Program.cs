@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -20,6 +21,19 @@ var authenticationSettings = new AuthSettings();
 builder.Configuration.GetSection("JWT").Bind(authenticationSettings);
 //builder.Services
 builder.Services.AddSingleton(authenticationSettings);
+
+
+//identity
+builder.Services.AddIdentityCore<AppUser>(opt =>
+    {
+        opt.Password.RequireNonAlphanumeric = false;
+    })
+    .AddRoles<AppRole>()
+    .AddSignInManager<SignInManager<AppUser>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,7 +65,7 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator
 builder.Services.AddScoped<IAccountService,AccountService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
-builder.Services.AddScoped<IPTaskService, PTaskService>();
+builder.Services.AddScoped<IAppTaskService, AppTaskService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -3,7 +3,7 @@ using WorkflowApi.DataTransferObject;
 
 namespace WorkflowApi.Services
 {
-    public interface IPTaskService
+    public interface IAppTaskService
     {
         List<PTaskDto> GetAllPtaskByTeamId(int teamId,List<Claim> ClaimList);
         PTaskDto CreatePTask(int teamId);
