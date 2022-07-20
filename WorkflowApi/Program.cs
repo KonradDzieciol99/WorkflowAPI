@@ -64,7 +64,7 @@ builder.Services.AddScoped<ErrorHandlingMiddleware> (); //CustomExceptionMiddlew
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator> ();
 builder.Services.AddScoped<IAccountService,AccountService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAppTaskService, AppTaskService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

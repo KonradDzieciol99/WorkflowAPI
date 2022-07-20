@@ -4,9 +4,9 @@ namespace WorkflowApi.DataTransferObject
 {
     public class UserDto
     {
-        [Required, EmailAddress]
+        public int Id { get; set; }
         public string Email { get; set; }
-        [Required]
-        public string Password { get; set; }
+        public string Token { get; set; }
+        public DateTime ExpireTime { get; set; }
     }
 }

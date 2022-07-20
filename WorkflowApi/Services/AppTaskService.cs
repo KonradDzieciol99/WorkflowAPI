@@ -18,13 +18,13 @@ namespace WorkflowApi.Services
             this._logger = logger;
         }
 
-        public PTaskDto CreatePTask(int teamId)
+        public AppTaskDto CreatePTask(int teamId)
         {
 
             AppTask pTask = new AppTask() {TeamId= teamId };
             _dbContext.AppTasks.Add(pTask);
             _dbContext.SaveChanges();
-            PTaskDto pTaskDto = new PTaskDto() 
+            AppTaskDto pTaskDto = new AppTaskDto() 
             {
                 Id=pTask.Id,
                 TeamId=teamId,
@@ -36,7 +36,7 @@ namespace WorkflowApi.Services
             return pTaskDto;
         }
 
-        public List<PTaskDto> GetAllPtaskByTeamId(int teamId, List<Claim> ClaimList)
+        public List<AppTaskDto> GetAllPtaskByTeamId(int teamId, List<Claim> ClaimList)
         {
 
             int userId = int.Parse(ClaimList.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
@@ -50,12 +50,12 @@ namespace WorkflowApi.Services
             var PTasks = this._dbContext.AppTasks
                                 .Where(t => t.TeamId == teamId).ToList();
 
-            List<PTaskDto> PTasksDto = new List<PTaskDto>();
+            List<AppTaskDto> PTasksDto = new List<AppTaskDto>();
 
             foreach (var PTask in PTasks)
             {
 
-                PTasksDto.Add(new PTaskDto()
+                PTasksDto.Add(new AppTaskDto()
                 {
                     Id = PTask.Id,
                     StartDate = PTask.StartDate,
@@ -70,7 +70,7 @@ namespace WorkflowApi.Services
             return PTasksDto;
         }
 
-        public void UpdatePTask(PTaskUpdateDto pTaskDto)
+        public void UpdatePTask(AppTaskUpdateDto pTaskDto)
         {
             AppTask pTask = new AppTask()
             {

@@ -27,50 +27,7 @@ namespace WorkflowApi.Services
             this._authSettings = authSettings;
         }
 
-        public async Task<Tuple<string, DateTime>> GenerateJwt(UserDto dto)
-        {
-            AppUser user = _userManager.Users
-                //.Include(u => u.Role)
-                .FirstOrDefault(u => u.Email == dto.Email);
-            
-            if(user is null)
-            {
-                throw new BadRequestException("Błędny użytkownik lub hasło");
-            }
-
-            var result = await _signInManager
-                .CheckPasswordSignInAsync(user, dto.Password, false);
-
-            if (!result.Succeeded)
-            {
-                throw new BadRequestException("Błędny użytkownik lub hasło");
-            }
-
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Email),
-            };
-            
-            var issuerAppSettings = _authSettings.jwtIssuer;
-            double minutesAppSettings = _authSettings.jwtExpire;
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiresMinutes = DateTime.Now.AddMinutes(minutesAppSettings);
-
-
-            var token = new JwtSecurityToken(issuerAppSettings,
-                issuerAppSettings,
-                claims,
-                expires: expiresMinutes,
-                signingCredentials: cred);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            return Tuple.Create(tokenHandler.WriteToken(token), expiresMinutes);
-        }
-
-        public async Task RegisterUserAsync(RegisterUserDto dto)
+        public async Task<AppUser> RegisterUserAsync(RegisterUserDto dto)
         {
             AppUser newUser = new()
             {
@@ -78,15 +35,58 @@ namespace WorkflowApi.Services
                 UserName = dto.Email
 
             };
+            
             var resoult = await _userManager.CreateAsync(newUser, dto.Password);
 
             //should be 401 (Unauthorized)
             if (!resoult.Succeeded)
             {
                 string errorDescription = "";
-                resoult.Errors.ToList().ForEach(x => errorDescription+= x.Description);
+                resoult.Errors.ToList().ForEach(x => errorDescription += x.Description);
                 throw new BadRequestException(errorDescription);
             }
+
+            return newUser;
         }
+
+
+
+        //public async Task<Tuple<string, DateTime>> GenerateJwt(AppUser user)
+        //{
+        //    //AppUser user = _userManager.Users
+        //    //    //.Include(u => u.Role)
+        //    //    .FirstOrDefault(u => u.Email == dto.Email);
+        //    //var result = await _signInManager
+        //    //    .CheckPasswordSignInAsync(user, dto.Password, false);
+        //    //if (!result.Succeeded)
+        //    //{
+        //    //    throw new BadRequestException("Błędny użytkownik lub hasło");
+        //    //}
+
+        //    var claims = new List<Claim>()
+        //    {
+        //        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        //        new Claim(ClaimTypes.Name, user.Email),
+        //    };
+
+        //    var issuerAppSettings = _authSettings.jwtIssuer;
+        //    double minutesAppSettings = _authSettings.jwtExpire;
+        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.JwtKey));
+        //    var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        //    var expiresMinutes = DateTime.Now.AddMinutes(minutesAppSettings);
+
+
+        //    var token = new JwtSecurityToken(issuerAppSettings,
+        //        issuerAppSettings,
+        //        claims,
+        //        expires: expiresMinutes,
+        //        signingCredentials: cred);
+
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+
+        //    return Tuple.Create(tokenHandler.WriteToken(token), expiresMinutes);
+        //}
+
+
     }
 }

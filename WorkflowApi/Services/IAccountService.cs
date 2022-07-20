@@ -1,11 +1,11 @@
 ﻿using WorkflowApi.DataTransferObject;
+using WorkflowApi.Models;
 
 namespace WorkflowApi.Services
 {
     public interface IAccountService
     {
-        Task RegisterUserAsync(RegisterUserDto dto);
-        Task<Tuple<string, DateTime>> GenerateJwt(UserDto dto);
+        Task<AppUser> RegisterUserAsync(RegisterUserDto dto);
     }
 
 }

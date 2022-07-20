@@ -5,9 +5,9 @@ namespace WorkflowApi.Services
 {
     public interface IAppTaskService
     {
-        List<PTaskDto> GetAllPtaskByTeamId(int teamId,List<Claim> ClaimList);
-        PTaskDto CreatePTask(int teamId);
-        void UpdatePTask(PTaskUpdateDto pTaskDto);
+        List<AppTaskDto> GetAllPtaskByTeamId(int teamId,List<Claim> ClaimList);
+        AppTaskDto CreatePTask(int teamId);
+        void UpdatePTask(AppTaskUpdateDto pTaskDto);
 
     }
 }

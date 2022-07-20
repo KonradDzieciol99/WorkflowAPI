@@ -1,6 +1,6 @@
 ﻿namespace WorkflowApi.DataTransferObject
 {
-    public class PTaskUpdateDto
+    public class AppTaskUpdateDto
     {
         public int Id { get; set; }
         public DateTime StartDate { get; set; }

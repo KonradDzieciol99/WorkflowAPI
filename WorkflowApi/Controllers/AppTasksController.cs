@@ -26,7 +26,7 @@ namespace WorkflowApi.Controllers
 
         // GET: api/AppTasks
         [HttpGet("GetAllByTeamId/{id}")]
-        public async Task<ActionResult<IEnumerable<PTaskDto>>> GetAll(int id)
+        public async Task<ActionResult<IEnumerable<AppTaskDto>>> GetAll(int id)
         {
             var claimsList = HttpContext.User.Claims.ToList();
             var pTaskDtoList=_pTaskService.GetAllPtaskByTeamId(id, claimsList);
@@ -40,7 +40,7 @@ namespace WorkflowApi.Controllers
 
         // GET: api/AppTasks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PTaskDto>> GetPTask(int id)
+        public async Task<ActionResult<AppTaskDto>> GetPTask(int id)
         {
           if (_dbcontext.AppTasks == null)
           {
@@ -60,7 +60,7 @@ namespace WorkflowApi.Controllers
         // PUT: api/AppTasks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("UpdatePTask")]
-        public async Task<IActionResult> updatePTask(PTaskUpdateDto pTaskDto)
+        public async Task<IActionResult> updatePTask(AppTaskUpdateDto pTaskDto)
         {//dodać sprawdzanie czy użytkownik należy do danego teamu
 
             //if (id != pTaskDto.Id)
@@ -91,7 +91,7 @@ namespace WorkflowApi.Controllers
         // POST: api/AppTasks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreatePTask")]
-        public async Task<ActionResult<PTaskDto>> CreatePTask(PTaskDto pTaskDto)
+        public async Task<ActionResult<AppTaskDto>> CreatePTask(AppTaskDto pTaskDto)
         {//dodać sprawdzanie czy użytkownik należy do danego teamu
 
             //var userClaims = HttpContext.User.Claims.ToList();
