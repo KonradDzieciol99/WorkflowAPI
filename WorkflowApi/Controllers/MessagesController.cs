@@ -42,7 +42,7 @@ namespace WorkflowApi.Controllers
                     RecipientId = message.RecipientId,
                     SenderId = message.SenderId,
                     Content = message.Content,
-                    MessageSent = message.MessageSent
+                    MessageSent = message.MessageSent//
                 });
             }
             return messagesDto;
