@@ -32,10 +32,9 @@ namespace WorkflowApi.Controllers
         [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<TeamDto>>> GetAll()
         {
-
             List<Claim> claimList = HttpContext.User.Claims.ToList();
             List<TeamDto> teamDboList = this._teamService.GetAll(claimList);
-
+            
             return teamDboList;
         }
 

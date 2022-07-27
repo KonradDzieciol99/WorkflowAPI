@@ -12,8 +12,8 @@ using WorkflowApi.Data;
 namespace WorkflowApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220719191624_allownull")]
-    partial class allownull
+    [Migration("20220726161125_fixConnection")]
+    partial class fixConnection
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -348,6 +348,22 @@ namespace WorkflowApi.Migrations
                             Id = 3,
                             Name = "High"
                         });
+                });
+
+            modelBuilder.Entity("WorkflowApi.Models.SignalRConnection", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SignalRConnectionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserName");
+
+                    b.ToTable("SignalRConnections");
                 });
 
             modelBuilder.Entity("WorkflowApi.Models.State", b =>

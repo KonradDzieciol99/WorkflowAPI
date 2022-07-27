@@ -17,10 +17,17 @@ namespace WorkflowApi.Data
         public DbSet<AppTask> AppTasks { get; set; }
         public DbSet<UserInvited> Invitations { get; set; }
         public DbSet<Message> Messages { get; set; }
-
+        public DbSet<SignalRConnection> SignalRConnections { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);//because of identity
+
+
+            builder.Entity<SignalRConnection>(ss =>
+            {
+                ss.HasKey(s => s.UserName);
+            });
 
             builder.Entity<Team>(ts =>
             {

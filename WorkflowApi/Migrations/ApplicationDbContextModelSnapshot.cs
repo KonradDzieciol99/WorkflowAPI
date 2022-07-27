@@ -348,6 +348,22 @@ namespace WorkflowApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WorkflowApi.Models.SignalRConnection", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SignalRConnectionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserName");
+
+                    b.ToTable("SignalRConnections");
+                });
+
             modelBuilder.Entity("WorkflowApi.Models.State", b =>
                 {
                     b.Property<int>("Id")

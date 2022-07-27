@@ -13,6 +13,7 @@ using WorkflowApi.DataTransferObject;
 using WorkflowApi.Models;
 using WorkflowApi.Models.Validators;
 using WorkflowApi.Services;
+using WorkflowApi.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,6 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
     .AddSignInManager<SignInManager<AppUser>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,6 +41,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             //ValidateIssuerSigningKey = true,
+            //ValidateIssuerSigningKey = true
             //ValidIssuer = builder.Configuration.GetSection("JWT:jwtIssuer").Value,
             //ValidAudience = builder.Configuration.GetSection("JWT:jwtIssuer").Value,
             //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) 
@@ -54,6 +54,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = authenticationSettings.jwtIssuer,
             ValidAudience = authenticationSettings.jwtIssuer
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = contextUnknow =>
+            {
+                var accessToken = contextUnknow.Request.Query["access_token"];
+                var path = contextUnknow.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    contextUnknow.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
+
     });
 builder.Services.AddControllers().AddFluentValidation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -68,6 +83,16 @@ builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAppTaskService, AppTaskService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR(o =>
+{
+    o.EnableDetailedErrors=true;
+});//signalR serv
+builder.Services.AddCors();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "RedisDemo_";
+});//
 
 
 var app = builder.Build();
@@ -83,10 +108,23 @@ app.UseMiddleware<ErrorHandlingMiddleware>();//CustomExceptionMiddleware
 
 app.UseHttpsRedirection();
 
+app.UseCors(builder =>
+{
+    builder.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+});
+
 app.UseAuthentication();//added
 
 app.UseAuthorization();//a mo¿e to?
 
-app.MapControllers();
+app.MapControllers();//dodajemy/mapujemy tutaj œcie¿ki(route) do kontrolerów czyli tak w³aœciwie sprawiamy ¿e np.
+//'api/Messages/PostMessage' jest widoczna i dzia³a
+app.MapHub<PresenceHub>("hubs/presence");//dodajemy tutaj œcie¿kê(route) do naszego haba odpowiadzialnego za aktywnoœæ u¿ytkpowników
+//signal nie mo¿e wysy³aæ nag³ówków do autoryzacji
+
+//jeœli nie bêdzie dzia³œ signalR dodaæ Cors
 
 app.Run();

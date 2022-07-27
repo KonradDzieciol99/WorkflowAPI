@@ -28,6 +28,7 @@ namespace WorkflowApi.Controllers
         [HttpGet("GetAllByTeamId/{id}")]
         public async Task<ActionResult<IEnumerable<AppTaskDto>>> GetAll(int id)
         {
+
             var claimsList = HttpContext.User.Claims.ToList();
             var pTaskDtoList=_pTaskService.GetAllPtaskByTeamId(id, claimsList);
 
@@ -110,7 +111,7 @@ namespace WorkflowApi.Controllers
         }
 
         // DELETE: api/AppTasks/5
-        [HttpDelete("{id}")]
+        [HttpDelete("RemoveAppTask/{id}")]
         public async Task<IActionResult> DeletePTask(int id)
         {
             if (_dbcontext.AppTasks == null)

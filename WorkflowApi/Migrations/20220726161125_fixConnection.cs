@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WorkflowApi.Migrations
 {
-    public partial class startAgain : Migration
+    public partial class fixConnection : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -63,6 +63,19 @@ namespace WorkflowApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Priorityies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SignalRConnections",
+                columns: table => new
+                {
+                    UserName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    SignalRConnectionId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SignalRConnections", x => x.UserName);
                 });
 
             migrationBuilder.CreateTable(
@@ -229,9 +242,9 @@ namespace WorkflowApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SenderId = table.Column<int>(type: "int", nullable: false),
-                    SenderUsername = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderUsername = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RecipientId = table.Column<int>(type: "int", nullable: false),
-                    RecipientUsername = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecipientUsername = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateRead = table.Column<DateTime>(type: "datetime2", nullable: true),
                     MessageSent = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -434,6 +447,9 @@ namespace WorkflowApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "SignalRConnections");
 
             migrationBuilder.DropTable(
                 name: "TeamMembers");
